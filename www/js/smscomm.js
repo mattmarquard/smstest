@@ -11,11 +11,17 @@ function partitionMessage(string) {
     } 
     // message has to be split amongst multiple SMS
     else {
-	messageComponents.push(string.slice(-80);
+	lastMessage = string.slice(-80); // message in header with hash
 	var newLength = msgLength - 80;
+	var endIndex = -81               //first char in regular header/message
+	var beginIndex = -81 - 128
 	while (newLength > 0) {
-
-	var tempString = string;	
+	    messageComponents.unshift(string.slice(beginIndex,endIndex);
+	    newLength = newLength - 128;
+	    endIndex = beginIndex - 1;
+	    beginIndex = endIndex - 128;
+	}
+	messageComponents.push(lastMessage);
     }
     return messageComponents;
 }
@@ -47,6 +53,8 @@ function prepareSms(models, actions) {
     
     // models and actions stringfied
     var string = JSON.stringify(preString);
+    console.log('STRING');
+    console.log(string);
     var hash = CryptoJS.MD5(string);
     var hashString = hash.toString(CryptoJS.enc.Hex);
     // cutting up message
@@ -55,7 +63,7 @@ function prepareSms(models, actions) {
     // if only one message setup finalheader with hash and return
     if (numMessages == 1) {
 	finalHeader['seq'] = 0;
-	finalHeader['teq'] = 1;
+	finalHeader['tseq'] = 1;
     	finalHeader['hash'] = hashString;
 	headAndBody['header'] = finalHeader;
 	headAndBody['body'] = string;
@@ -63,37 +71,29 @@ function prepareSms(models, actions) {
 	return finalMessages;
     }
     for (i = 0; i <= numMessages; i ++) {
+	if (i == numMessages) {
+	    finalHeader['seq'] = numMessages - 1;
+	    finalHeader['tseq'] = numMessages;
+	    headAndBody['header'] = finalHeader;
+	    headAndBody['body'] = messageComponents[numMessages - 1]
+	    finalMessages.push(JSON.stringify(headAndBody));
+	}
+	else {
+	    header['seq'] = i;
+	    header['tseq'] = numMessages;
+	    headAndBody['header'] = header;
+	    headAndBody['body'] = messageComponents[i];
+	    finalMessages.push(JSON.stringify(headAndBody));
+    }
 
 
-    // HEADER STUFF =============================================================================
-    var header = {}
     // 19 for header without hash assuming max seq umber is 99
     // 38 when 'header' and' body elements exist in final JSON... 40 if you include 2 parens '{}'
     // this is 128 free characters for body per message
-    header['seq'] = 02;
-    header['tseq'] = 23;
-    headAndBody['header'] = header;
-    var stringHeader = JSON.stringify(header);
-    var stringHandB = JSON.stringify(headAndBody);
-    console.log('header length');
-    console.log(stringHeader.length);
-    console.log(stringHeader);
-    console.log('header and body JSON with header');
-    console.log(stringHandB.length);
-    console.log(stringHandB);
     // length of everything except body is  80 without parens, 82 with
     // only 80 characters when hash included
-    header['hash'] = hashString;
-    headAndBody['header'] = header;
-    var stringHandB = JSON.stringify(headAndBody);
-    var withHash = JSON.stringify(header);
-    console.log('header length with hash');
-    console.log(withHash.length);
-    console.log(withHash);
-    console.log('header and body JSON with header and hash');
-    console.log(stringHandB.length);
-    console.log(stringHandB);
-    // 97 for header with hash assuming max seq number is 99
+    //
+    // **** 97 for header with hash assuming max seq number is 99
 
-    return preString;
+    return finalMessages;
 }

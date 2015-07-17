@@ -62,7 +62,7 @@ var app = {
 	    delete_hospital,
 	    update_shelter
 	]
-	var result = prepareSms(models_to_change, actions_to_take);
+	var messagesToSend = prepareSms(models_to_change, actions_to_take);
 
 	//CONFIGURATION
 	var options = {
@@ -75,7 +75,11 @@ var app = {
 
 	var success = function () { alert('Message sent successfully'); };
 	var error = function (e) { alert('Message Failed:' + e); };
-	//sms.send(number, message, options, success, error);
+
+	// send messages
+	for (i = 0; i < messagesToSend.length; i++){
+	    sms.send(number, messagesToSend[i], options, success, error);
+	}
     }
 };
 
