@@ -28,13 +28,41 @@ var app = {
 
         console.log('Received Event: ' + id);
     },
-    sendSms: function() {
+    prepareSms: function() {
 	var number = document.getElementById('numberTxt').value;
-	//var message = document.getElementById('messageTxt').value;
 	var shelter = new Shelter;
 	var message = shelter.toJSON();
-	alert(number);
-	alert(message);
+	var create_hospital = new Hospital(
+		{
+		    name: "Matt Hospital",
+		    population: 100,
+		    address: '1234 Crisis Road'
+		}
+	)
+	var delete_hospital = new Hospital(
+		{
+		    name: "Drew Hospital",
+		    population: 100,
+		    address: '1234 Apocolypse Avenue'
+		}
+	)
+	var update_shelter = new Shelter(
+		{
+		    name: "Scott Shack",
+		    population: 90,
+		    address: '1234 Archery Street'
+		}
+	)
+	var actions_to_take = []
+	actions_to_take.push(1);
+	actions_to_take.push(2);
+	actions_to_take.push(3);
+	var models_to_change = [
+	    create_hospital,
+	    delete_hospital,
+	    update_shelter
+	]
+	var result = prepareSms(models_to_change, actions_to_take);
 
 	//CONFIGURATION
 	var options = {
@@ -47,7 +75,7 @@ var app = {
 
 	var success = function () { alert('Message sent successfully'); };
 	var error = function (e) { alert('Message Failed:' + e); };
-	sms.send(number, message, options, success, error);
+	//sms.send(number, message, options, success, error);
     }
 };
 
