@@ -13,16 +13,18 @@ function partitionMessage(string) {
     else {
 	lastMessage = string.slice(-80); // message in header with hash
 	var newLength = msgLength - 80;
-	var endIndex = -81;               //first char in regular header/message
+	var endIndex = -80;               //first char in regular header/message
 	var beginIndex = -81 - 128;
 	while (newLength > 0) {
 	    messageComponents.unshift(string.slice(beginIndex,endIndex));
 	    newLength = newLength - 128;
-	    endIndex = beginIndex - 1;
+	    endIndex = beginIndex;
 	    beginIndex = endIndex - 128;
 	}
 	messageComponents.push(lastMessage);
     }
+    console.log("Message components after partition");
+    console.log(messageComponents);
     return messageComponents;
 }
 
@@ -70,12 +72,13 @@ function prepareSms(models, actions) {
 	finalMessages.push(headAndBody);
 	return finalMessages;
     }
-    for (i = 0; i <= numMessages; i ++) {
-	if (i == numMessages) {
+    for (i = 0; i < numMessages; i ++) {
+	if (i == (numMessages - 1)) {
 	    finalHeader['seq'] = numMessages - 1;
 	    finalHeader['tseq'] = numMessages;
+	    finalHeader['hash'] = hashString;
 	    headAndBody['header'] = finalHeader;
-	    headAndBody['body'] = messageComponents[numMessages - 1]
+	    headAndBody['body'] = messageComponents[i];
 	    finalMessages.push(JSON.stringify(headAndBody));
 	}
 	else {
