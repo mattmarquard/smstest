@@ -30,8 +30,6 @@ var app = {
     },
     prepareSms: function() {
 	var number = document.getElementById('numberTxt').value;
-	var shelter = new Shelter;
-	var message = shelter.toJSON();
 	var create_hospital = new Hospital(
 		{
 		    name: "Matt Hospital",

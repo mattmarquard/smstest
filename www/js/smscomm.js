@@ -48,8 +48,8 @@ function prepareSms(models, actions) {
     }
 
     var finalHeader = {};
-    var headers = {};
-    var finalMessages;
+    var header = {};
+    var finalMessages = [];
     
     // models and actions stringfied
     var string = JSON.stringify(preString);
