@@ -3,7 +3,7 @@
 // OUTPUT:
 // list of message partitioned so it can be sent over SMS
 function partitionMessage(string) {
-    var msgLength = string.length
+    var msgLength = string.length;
     var messageComponents = [];
     // if size fits into one sms
     if (msgLength <= 80) {
@@ -13,10 +13,10 @@ function partitionMessage(string) {
     else {
 	lastMessage = string.slice(-80); // message in header with hash
 	var newLength = msgLength - 80;
-	var endIndex = -81               //first char in regular header/message
-	var beginIndex = -81 - 128
+	var endIndex = -81;               //first char in regular header/message
+	var beginIndex = -81 - 128;
 	while (newLength > 0) {
-	    messageComponents.unshift(string.slice(beginIndex,endIndex);
+	    messageComponents.unshift(string.slice(beginIndex,endIndex));
 	    newLength = newLength - 128;
 	    endIndex = beginIndex - 1;
 	    beginIndex = endIndex - 128;
@@ -84,6 +84,7 @@ function prepareSms(models, actions) {
 	    headAndBody['header'] = header;
 	    headAndBody['body'] = messageComponents[i];
 	    finalMessages.push(JSON.stringify(headAndBody));
+	}
     }
 
 
@@ -95,5 +96,7 @@ function prepareSms(models, actions) {
     //
     // **** 97 for header with hash assuming max seq number is 99
 
+    console.log("list of messages before returning out of SMSmodule");
+    console.log(finalMessages);
     return finalMessages;
 }
