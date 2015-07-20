@@ -51,7 +51,7 @@ var app = {
 		    address: '1234 Archery Street'
 		}
 	)
-	var actions_to_take = []
+	var actions_to_take = [];
 	actions_to_take.push(1);
 	actions_to_take.push(2);
 	actions_to_take.push(3);
@@ -59,7 +59,7 @@ var app = {
 	    create_hospital,
 	    delete_hospital,
 	    update_shelter
-	]
+	];
 	var messagesToSend = prepareSms(models_to_change, actions_to_take);
 
 	//CONFIGURATION
@@ -78,7 +78,7 @@ var app = {
 	for (i = 0; i < messagesToSend.length; i++){
 	    sms.send(number, messagesToSend[i], options, success, error);
 	}
-    }
+    },
 };
 
 app.initialize();
