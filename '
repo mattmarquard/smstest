@@ -66,35 +66,33 @@ function prepareSms(models, actions) {
     var seq;
     var seqString;
     var tseq;
-    var seqAndHash;
-    var fullMessage;
     // if only one message setup finalheader with hash and return
     if (numMessages == 1) {
 	var seqInfo = '0001';
-	seqAndHash = seqInfo.concat(hashString);
-	fullMessage = seqAndHash.concat(string);
+	var seqAndHash = seqInfo.concat(hashString);
+	var fullMessage = seqAndHash.concat(string);
 	finalMessages.push(fullMessage);
 	return finalMessages;
     }
-    //string of tseq
     var tseqString = ("00" + numMessages).substr(-2,2);
 
     for (i = 0; i < numMessages; i ++) {
 	if (i == (numMessages - 1)) {
-	    seq = i;
-	    seqString = ("00" + seq).substr(-2,2);
-	    seqAndTotal = seqString.concat(tseqString);
-	    seqAndHash = seqString.concat(hashString);
-	    fullMessage = seqAndHash.concat(messageComponents[i]);
-	    finalMessages.push(fullMessage);
+	    seq = numMessages - 1
+	    
+	    //finalHeader['seq'] = numMessages - 1;
+	    finalHeader['tseq'] = numMessages;
+	    finalHeader['hash'] = hashString;
+	    headAndBody['header'] = finalHeader;
+	    headAndBody['body'] = messageComponents[i];
+	    finalMessages.push(JSON.stringify(headAndBody));
 	}
 	else {
-	    seq = i;
-	    seqString = ("00" + seq).substr(-2,2);
-	    seqAndTotal = seqString.concat(tseqString);
-	    seqAndHash = seqString.concat(hashString);
-	    fullMessage = seqAndHash.concat(messageComponents[i]);
-	    finalMessages.push(fullMessage));
+	    header['seq'] = i;
+	    header['tseq'] = numMessages;
+	    headAndBody['header'] = header;
+	    headAndBody['body'] = messageComponents[i];
+	    finalMessages.push(JSON.stringify(headAndBody));
 	}
     }
 
