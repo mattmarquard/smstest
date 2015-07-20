@@ -11,15 +11,15 @@ function partitionMessage(string) {
     } 
     // message has to be split amongst multiple SMS
     else {
-	lastMessage = string.slice(-80); // message in header with hash
-	var newLength = msgLength - 80;
-	var endIndex = -80;               //first char in regular header/message
-	var beginIndex = -81 - 128;
+	lastMessage = string.slice(-124); // message in header with hash
+	var newLength = msgLength - 124;
+	var endIndex = -124;               //first char in regular header/message
+	var beginIndex = -125 - 156;
 	while (newLength > 0) {
 	    messageComponents.unshift(string.slice(beginIndex,endIndex));
-	    newLength = newLength - 128;
+	    newLength = newLength - 156;
 	    endIndex = beginIndex;
-	    beginIndex = endIndex - 128;
+	    beginIndex = endIndex - 156;
 	}
 	messageComponents.push(lastMessage);
     }
