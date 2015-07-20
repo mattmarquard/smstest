@@ -84,7 +84,7 @@ function prepareSms(models, actions) {
 	    seq = i;
 	    seqString = ("00" + seq).substr(-2,2);
 	    seqAndTotal = seqString.concat(tseqString);
-	    seqAndHash = seqString.concat(hashString);
+	    seqAndHash = seqAndTotal.concat(hashString);
 	    fullMessage = seqAndHash.concat(messageComponents[i]);
 	    finalMessages.push(fullMessage);
 	}
