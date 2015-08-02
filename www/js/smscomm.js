@@ -11,16 +11,22 @@ function partitionMessage(string) {
     } 
     // message has to be split amongst multiple SMS
     else {
-	lastMessage = string.slice(-124); // message in header with hash
-	var newLength = msgLength - 124;
-	var endIndex = -124;               //first char in regular header/message
-	var beginIndex = -125 - 156;
+	lastMessage = string.slice(-113); // message in header with hash
+	var newLength = msgLength - 113;
+	var endIndex = -113;               //first char in regular header/message
+	var beginIndex = -114 - 144;
+	var messageComponent;
 	while (newLength > 0) {
-	    messageComponents.unshift(string.slice(beginIndex,endIndex));
-	    newLength = newLength - 156;
+	    messageComponent = string.slice(beginIndex, endIndex);
+	    console.log("MESSAGE LENGTH");
+	    console.log(messageComponent.length);
+	    messageComponents.unshift(messageComponent);
+	    newLength = newLength - 144;
 	    endIndex = beginIndex;
-	    beginIndex = endIndex - 156;
+	    beginIndex = endIndex - 144;
 	}
+	console.log("MESSAGE LENGTH");
+	console.log(lastMessage.length);
 	messageComponents.push(lastMessage);
     }
     console.log("Message components after partition");
@@ -34,20 +40,20 @@ function partitionMessage(string) {
 // OUTPUT: a list of messages to be sent via SMS
 function prepareSms(models, actions) {
 
-    var preString = {}
+    var preString = {};
+    //Stringify each object/model/resource and put in list
     for (i = 0; i < actions.length; i++) {
 	if (preString.hasOwnProperty(actions[i])) {
-	    preString[actions[i]].push(models[i].toJSON());
+	    preString[actions[i]].push(JSON.stringify(models[i], null, 0));
 	}
 	else {
 	    preString[actions[i]] = []
-	    preString[actions[i]].push(models[i].toJSON());
+	    preString[actions[i]].push(JSON.stringify(models[i], null, 0));
 	}
     }
-    var headAndBody = {
-	'header': {},
-	'body': {}
-    }
+
+    console.log('prestring');
+    console.log(preString);
 
     var finalString = '';
     var finalHeader = {};
@@ -58,11 +64,15 @@ function prepareSms(models, actions) {
     var string = JSON.stringify(preString);
     console.log('STRING');
     console.log(string);
+    console.log('string length');
+    console.log(string.length);
     var hash = CryptoJS.MD5(string);
     var hashString = hash.toString(CryptoJS.enc.Hex);
     // cutting up message
     var messageComponents = partitionMessage(string);
+    console.log('num Messages');
     var numMessages = messageComponents.length;
+    console.log(numMessages)'
     var seq;
     var seqString;
     var tseq;
@@ -86,6 +96,8 @@ function prepareSms(models, actions) {
 	    seqAndTotal = seqString.concat(tseqString);
 	    seqAndHash = seqAndTotal.concat(hashString);
 	    fullMessage = seqAndHash.concat(messageComponents[i]);
+	    console.log('length with header');
+	    console.log(fullMessage.length);
 	    finalMessages.push(fullMessage);
 	}
 	else {
@@ -93,18 +105,11 @@ function prepareSms(models, actions) {
 	    seqString = ("00" + seq).substr(-2,2);
 	    seqAndTotal = seqString.concat(tseqString);
 	    fullMessage = seqAndTotal.concat(messageComponents[i]);
+	    console.log('length with header');
+	    console.log(fullMessage.length);
 	    finalMessages.push(fullMessage);
 	}
     }
-
-
-    // 4 for header without hash assuming max seq umber is 99
-    // 36 when hash included
-    // this is 154 free characters for body per message
-    // length of everything except body is 124 without parens, 82 with
-    // only 80 characters when hash included
-    //
-    // **** 97 for header with hash assuming max seq number is 99
 
     console.log("list of messages before returning out of SMSmodule");
     console.log(finalMessages);
